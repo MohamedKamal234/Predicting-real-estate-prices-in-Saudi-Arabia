@@ -23,7 +23,6 @@ except Exception as e:
     st.error(f"Error loading model assets: {e}")
     st.stop()
 
-# قاموس إحداثيات المناطق
 provinces_coords = {
     "Riyadh": [24.7136, 46.6753],
     "Makkah": [21.3891, 39.8579],
@@ -76,10 +75,8 @@ with col2:
 
 with col3:
     st.subheader("📍 Location & Type")
-    # قائمة اختيار المنطقة
     selected_province = st.selectbox("Select Province", list(provinces_coords.keys()), index=0)
     
-    # الحصول على الإحداثيات بناءً على الاختيار
     lat = provinces_coords[selected_province][0]
     lng = provinces_coords[selected_province][1]
     
@@ -88,7 +85,6 @@ with col3:
     type_map = {"Apartment": 0, "Building": 1, "Floor": 2, "House": 3, "Villa": 4}
     property_category = type_map[selected_type]
 
-    # تحديد ما إذا كانت الرياض تلقائياً بناءً على اختيار المنطقة
     is_riyadh = 1 if selected_province == "Riyadh" else 0
     st.info(f"Location Set: {selected_province}")
 
@@ -97,7 +93,6 @@ st.divider()
 if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
     with st.spinner('Running Random Forest Inference...'):
         
-        # ترتيب المدخلات ليتوافق مع الموديل
         input_values = [
             beds, livings, wc, area, street_width, age,
             kitchen, property_category, is_riyadh, is_new, lat, lng
@@ -115,8 +110,7 @@ if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
             market_mean = 1613389.0
             diff = final_price - market_mean
             
-            # عرض تفاصيل الموقع المستخدم في الحساب (اختياري للتأكيد)
-            st.write(f"Calculation Basis:** Calculated for {selected_province} (Lat: {lat}, Lng: {lng})")
+            st.write(f"Calculation Basis: Calculated for {selected_province} (Lat: {lat}, Lng: {lng})")
             
             if diff > 0:
                 st.info(f"💡 This price is {abs(diff):,.2f} SAR above the general market average.")
