@@ -49,8 +49,8 @@ The model is optimized for:
 """)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🚀 Powered by:")
-st.sidebar.info("- Fady Talat - Fatma Ashraf - Ali Kamal - Mohamed Kamal - Eslam Gamal")
+st.sidebar.markdown(" 🚀 Powered by:")
+st.sidebar.info("- Fady Talat - Fatma Ashraf - Ali Kamar - Mohamed Kamal - Eslam Gamal")
 
 st.title("🏠 Saudi Real Estate AI Predictor")
 st.markdown("Select the province and property details to get an AI-powered price estimation.")
@@ -110,13 +110,13 @@ if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
             final_price = np.expm1(log_pred)[0]
             
             st.balloons()
-            st.success(f"### Estimated Price: {final_price:,.2f} SAR")
+            st.success(f" Estimated Price: {final_price:,.2f} SAR")
             
             market_mean = 1613389.0
             diff = final_price - market_mean
             
             # عرض تفاصيل الموقع المستخدم في الحساب (اختياري للتأكيد)
-            st.write(f"**Calculation Basis:** Calculated for {selected_province} (Lat: {lat}, Lng: {lng})")
+            st.write(f"Calculation Basis:** Calculated for {selected_province} (Lat: {lat}, Lng: {lng})")
             
             if diff > 0:
                 st.info(f"💡 This price is {abs(diff):,.2f} SAR above the general market average.")
