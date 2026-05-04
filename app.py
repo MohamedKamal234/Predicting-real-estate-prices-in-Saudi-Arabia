@@ -44,8 +44,8 @@ st.sidebar.header("📊 Model Constraints")
 st.sidebar.markdown(f"""
 The model is optimized for:
 - Max Area: 688 m²
-- **Bedrooms: 1 to 6
-- **Property Age: Up to 2.5 years
+- Bedrooms: 1 to 6
+- Property Age: Up to 2.5 years
 """)
 
 st.sidebar.markdown("---")
