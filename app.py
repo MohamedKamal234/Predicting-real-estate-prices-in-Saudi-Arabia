@@ -68,8 +68,7 @@ with col2:
 
 with col3:
     st.subheader("📍 Location & Type")
-    lat = st.number_input("Latitude", -31.0, 38.0, 23.95, format="%.4f")
-    lng = st.number_input("Longitude", -3.0, 52.0, 44.88, format="%.4f")
+    # تم حذف حقول Latitude و Longitude من هنا
     
     type_options = ["Apartment", "Building", "Floor", "House", "Villa"]
     selected_type = st.selectbox("Property Type", type_options, index=4)
@@ -82,9 +81,14 @@ st.divider()
 
 if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
     with st.spinner('Running Random Forest Inference...'):
+        # قيم افتراضية للموقع لضمان عمل الموديل (متوسطات)
+        default_lat = 23.95
+        default_lng = 44.88
+        
+        # ترتيب المدخلات ليتوافق مع الموديل (الـ lat والـ lng يرسلان في الخلفية فقط)
         input_values = [
             beds, livings, wc, area, street_width, age,
-            kitchen, property_category, is_riyadh, is_new, lat, lng
+            kitchen, property_category, is_riyadh, is_new, default_lat, default_lng
         ]
         
         input_df = pd.DataFrame([input_values], columns=features)
