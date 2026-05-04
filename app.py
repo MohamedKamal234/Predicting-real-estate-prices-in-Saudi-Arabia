@@ -23,6 +23,23 @@ except Exception as e:
     st.error(f"Error loading model assets: {e}")
     st.stop()
 
+# قاموس إحداثيات المناطق
+provinces_coords = {
+    "Riyadh": [24.7136, 46.6753],
+    "Makkah": [21.3891, 39.8579],
+    "Madinah": [24.4672, 39.6024],
+    "Eastern": [26.4207, 50.0888],
+    "Qasim": [26.3273, 43.9784],
+    "Aseer": [18.2171, 42.5053],
+    "Tabuk": [28.3835, 36.5662],
+    "Hail": [27.5114, 41.7208],
+    "Northern Borders": [30.9753, 41.0381],
+    "Jazan": [16.8892, 42.5511],
+    "Najran": [17.4933, 44.1322],
+    "Al-Bahah": [20.0129, 41.4677],
+    "Al-Jawf": [29.9697, 40.2064]
+}
+
 st.sidebar.header("📊 Model Constraints")
 st.sidebar.markdown(f"""
 The model is optimized for:
@@ -31,21 +48,12 @@ The model is optimized for:
 - **Property Age: Up to 2.5 years
 """)
 
-st.sidebar.write("") 
-st.sidebar.write("") 
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🚀 Powered by:")
-st.sidebar.info("""
-- Fady Talat Abdallah
-- Fatma Ashraf Zain
-- Ali Kamal
-- Mohamed Kamal Ahmed Elashmawy
-- Eslam Gamal
-""")
+st.sidebar.info("- Fady Talat - Fatma Ashraf - Ali Kamal - Mohamed Kamal - Eslam Gamal")
 
 st.title("🏠 Saudi Real Estate AI Predictor")
-st.markdown("Enter property details based on the market ranges found in the dataset.")
+st.markdown("Select the province and property details to get an AI-powered price estimation.")
 
 st.divider()
 
@@ -68,27 +76,31 @@ with col2:
 
 with col3:
     st.subheader("📍 Location & Type")
-    # تم حذف حقول Latitude و Longitude من هنا
+    # قائمة اختيار المنطقة
+    selected_province = st.selectbox("Select Province", list(provinces_coords.keys()), index=0)
+    
+    # الحصول على الإحداثيات بناءً على الاختيار
+    lat = provinces_coords[selected_province][0]
+    lng = provinces_coords[selected_province][1]
     
     type_options = ["Apartment", "Building", "Floor", "House", "Villa"]
     selected_type = st.selectbox("Property Type", type_options, index=4)
     type_map = {"Apartment": 0, "Building": 1, "Floor": 2, "House": 3, "Villa": 4}
     property_category = type_map[selected_type]
 
-    is_riyadh = st.selectbox("In Riyadh City?", [1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
+    # تحديد ما إذا كانت الرياض تلقائياً بناءً على اختيار المنطقة
+    is_riyadh = 1 if selected_province == "Riyadh" else 0
+    st.info(f"Location Set: {selected_province}")
 
 st.divider()
 
 if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
     with st.spinner('Running Random Forest Inference...'):
-        # قيم افتراضية للموقع لضمان عمل الموديل (متوسطات)
-        default_lat = 23.95
-        default_lng = 44.88
         
-        # ترتيب المدخلات ليتوافق مع الموديل (الـ lat والـ lng يرسلان في الخلفية فقط)
+        # ترتيب المدخلات ليتوافق مع الموديل
         input_values = [
             beds, livings, wc, area, street_width, age,
-            kitchen, property_category, is_riyadh, is_new, default_lat, default_lng
+            kitchen, property_category, is_riyadh, is_new, lat, lng
         ]
         
         input_df = pd.DataFrame([input_values], columns=features)
@@ -102,6 +114,10 @@ if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
             
             market_mean = 1613389.0
             diff = final_price - market_mean
+            
+            # عرض تفاصيل الموقع المستخدم في الحساب (اختياري للتأكيد)
+            st.write(f"**Calculation Basis:** Calculated for {selected_province} (Lat: {lat}, Lng: {lng})")
+            
             if diff > 0:
                 st.info(f"💡 This price is {abs(diff):,.2f} SAR above the general market average.")
             else:
@@ -111,4 +127,4 @@ if st.button("🚀 Calculate Estimated Market Price", use_container_width=True):
             st.error(f"Prediction Error: {e}")
 
 st.markdown("---")
-st.caption("Real Estate Pricing Engine v2.0 | Trained on 300k+ Records | Accuracy: 90.8%")
+st.caption("Real Estate Pricing Engine v2.0 | Accuracy: 90.8%")
